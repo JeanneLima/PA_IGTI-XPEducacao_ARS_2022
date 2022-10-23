@@ -1,3 +1,28 @@
-@startuml teste
-Alice -> Bob: test
+@startuml C4_Model_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(commonUser, "Usuário do Sistema", "Profissional da área da Saúde com conta no sistema.")
+
+System_Boundary(newSystem, "Sistema Novo da Empresa") {
+    Container(newSystemSPA, "Single Page Application", "ReactJS, Typescript, SASS", "Aplicação web acessível pelo navegador do usuário, que provê uma experiência sem  recarregamento de toda a página ou redirecionamento para uma nova, tendo as funcionalidades concentradas em uma única página.")
+    Container(newSystemServiceAPIGateway, "Web API Gateway", "C#, ASP.NET 6", "A “porta de entrada”, que faz interface com o serviço de Back-end interceptando as solicitações recebidas agregando segurança.")
+    Container(newSystemServiceAPI, "Web API", "C#, ASP.NET 6", "Interface entre navegador e servidor, estruturada levando em consideração a arquitetura de microsserviços.")
+    Container(newSystemSecurityServiceAPI, "Web API de Segurança", "Identity Server 4, C#, ASP.NET 6", "Interface que permite  Single Sign-On (SSO) e centraliza processos de autenticação utilizando Identity Server 4, um framework OpenID Connect e OAuth 2.0 para ASP.NET Core.")
+    ContainerDb(newSystemDb, "Banco de Dados", "Microsoft SQL Server", "Banco de dados relacional SQL que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
+
+    Rel(newSystemSPA, newSystemServiceAPIGateway, "Faz requisições", "REST")
+    Rel(newSystemServiceAPIGateway, newSystemServiceAPI, "Gerencia tráfego", "TODO")
+    Rel(newSystemServiceAPI, newSystemSecurityServiceAPI, "Passa pelo gerenciamento de autenticação e autorização", "JWT, Bearer")
+    Rel(newSystemSecurityServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
+    Rel(newSystemServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
+}
+
+System_Ext(externalEmailSystem, "Sistema de email", "Sistema Sendgrid para serviços de email em escala.")
+System_Ext(hospitalERPExternalSystem, "Sistema de ERP ou API do hospital.", "Sistema de ERP ou API do hospital provedor de parte dos dados integrados na plataforma da empresa.")
+
+' Rel(commonUser, newSystemWebApp, "Utiliza")
+Rel(commonUser, newSystemSPA, "Utiliza")
+Rel(newSystemServiceAPI, hospitalERPExternalSystem, "Integra dados", "Ex: HL7 FHIR")
+Rel(newSystemServiceAPI, externalEmailSystem, "Solicita envio de email")
+Rel(externalEmailSystem, commonUser, "Envia email")
 @enduml
