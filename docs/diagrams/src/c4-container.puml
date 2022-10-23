@@ -11,7 +11,7 @@ System_Boundary(newSystem, "Sistema Novo da Empresa") {
     ContainerDb(newSystemDb, "Banco de Dados", "Microsoft SQL Server", "Banco de dados relacional SQL que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
 
     Rel(newSystemSPA, newSystemServiceAPIGateway, "Faz requisições", "REST")
-    Rel(newSystemServiceAPIGateway, newSystemServiceAPI, "Gerencia tráfego", "TODO")
+    Rel(newSystemServiceAPIGateway, newSystemServiceAPI, "Gerencia tráfego")
     Rel(newSystemServiceAPI, newSystemSecurityServiceAPI, "Passa pelo gerenciamento de autenticação e autorização", "JWT, Bearer")
     Rel(newSystemSecurityServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
     Rel(newSystemServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
