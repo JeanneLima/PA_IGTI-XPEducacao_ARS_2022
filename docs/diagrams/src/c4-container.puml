@@ -11,14 +11,18 @@ System_Boundary(newSystem, "Sistema Novo da Empresa") {
     Container(newSystemServiceAPIGateway, "Web API Gateway", "C#, ASP.NET 6", "A “porta de entrada”, que faz interface com o serviço de Back-end interceptando as solicitações recebidas agregando segurança.")
     Container(newSystemServiceAPI, "Web API", "C#, ASP.NET 6", "Interface entre navegador e servidor, estruturada levando em consideração a arquitetura de microsserviços.")
     Container(newSystemSecurityServiceAPI, "Web API de Segurança", "Identity Server 4, C#, ASP.NET 6", "Interface que permite  Single Sign-On (SSO) e centraliza processos de autenticação utilizando Identity Server 4, um framework OpenID Connect e OAuth 2.0 para ASP.NET Core.")
-    ContainerDb(newSystemDb, "Banco de Dados", "Microsoft SQL Server", "Banco de dados relacional SQL que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
+    ContainerDb(newSystemDbRead, "Banco de Dados de Leitura", "Microsoft SQL Server", "Banco de dados relacional SQL de leitura que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
+    ContainerDb(newSystemDbWrite, "Banco de Dados de Escrita", "Microsoft SQL Server", "Banco de dados relacional SQL de escrita que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
 
     Rel(newSystemWebAppMVC, newSystemServiceAPIGateway, "Faz requisições", "REST")
     Rel(newSystemSPA, newSystemServiceAPIGateway, "Faz requisições", "REST")
     Rel(newSystemServiceAPIGateway, newSystemServiceAPI, "Gerencia tráfego")
     Rel(newSystemServiceAPI, newSystemSecurityServiceAPI, "Passa pelo gerenciamento de autenticação e autorização", "JWT, Bearer")
-    Rel(newSystemSecurityServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
-    Rel(newSystemServiceAPI, newSystemDb, "Lê e altera dados", "CQRS")
+    Rel(newSystemSecurityServiceAPI, newSystemDbWrite, "Altera dados", "CQRS")
+    Rel(newSystemSecurityServiceAPI, newSystemDbRead, "Lê dados", "CQRS")
+    Rel(newSystemServiceAPI, newSystemDbWrite, "Altera dados", "CQRS")
+    Rel(newSystemServiceAPI, newSystemDbRead, "Lê dados", "CQRS")
+    Rel(newSystemDbWrite, newSystemDbRead, "Sincroniza dados")
 }
 
 System_Ext(externalEmailSystem, "Sistema de email", "Sistema Sendgrid para serviços de email em escala.")
