@@ -1,6 +1,8 @@
 @startuml C4_Model_Container
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
+left to right direction
+
 Person(commonUser, "Usuário do Sistema", "Profissional da área da Saúde com conta no sistema.")
 
 System_Boundary(newSystem, "Sistema Novo da Empresa") {

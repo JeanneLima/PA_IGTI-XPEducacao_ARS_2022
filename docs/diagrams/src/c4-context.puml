@@ -1,6 +1,8 @@
 @startuml C4_Model_Context
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
+left to right direction
+
 Person(commonUser, "Usuário do Sistema", "Profissional da área da Saúde com conta no sistema.")
 System(newSystem, "Sistema Novo da Empresa", "Qualquer sistema migrado do legado.")
 System_Ext(externalEmailSystem, "Sistema de email", "Sistema Sendgrid para serviços de email em escala.")
