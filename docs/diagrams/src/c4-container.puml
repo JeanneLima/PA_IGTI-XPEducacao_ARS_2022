@@ -1,0 +1,36 @@
+@startuml C4_Model_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+left to right direction
+
+Person(commonUser, "Usuário do Sistema", "Profissional da área da Saúde com conta no sistema.")
+
+System_Boundary(newSystem, "Sistema Novo da Empresa") {
+    Container(newSystemWebAppMVC, "Aplicação Web MVC", "C#, ASP.NET MVC 6, Javascript, StencilJS, CSS", "Aplicação web com Server Side Rendering (SSR) seguindo o padrão de projeto Model-View-Controller (MVC) e utilizando bibliotecas externas feitas com StencilJS.")
+    Container(newSystemSPA, "Single Page Application", "ReactJS, Typescript, SASS", "Aplicação web acessível pelo navegador do usuário, que provê uma experiência sem  recarregamento de toda a página ou redirecionamento para uma nova, tendo as funcionalidades concentradas em uma única página.")
+    Container(newSystemServiceAPIGateway, "Web API Gateway", "C#, ASP.NET 6", "A “porta de entrada”, que faz interface com o serviço de Back-end interceptando as solicitações recebidas agregando segurança.")
+    Container(newSystemServiceAPI, "Web API", "C#, ASP.NET 6", "Interface entre navegador e servidor, estruturada levando em consideração a arquitetura de microsserviços.")
+    Container(newSystemSecurityServiceAPI, "Web API de Segurança", "Identity Server 4, C#, ASP.NET 6", "Interface que permite  Single Sign-On (SSO) e centraliza processos de autenticação utilizando Identity Server 4, um framework OpenID Connect e OAuth 2.0 para ASP.NET Core.")
+    ContainerDb(newSystemDbRead, "Banco de Dados de Leitura", "Microsoft SQL Server", "Banco de dados relacional SQL de leitura que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
+    ContainerDb(newSystemDbWrite, "Banco de Dados de Escrita", "Microsoft SQL Server", "Banco de dados relacional SQL de escrita que armazena e fornece acesso a pontos de dados relacionados entre si (ex: informações dos usuários e logs).")
+
+    Rel(newSystemWebAppMVC, newSystemServiceAPIGateway, "Faz requisições", "REST")
+    Rel(newSystemSPA, newSystemServiceAPIGateway, "Faz requisições", "REST")
+    Rel(newSystemServiceAPIGateway, newSystemServiceAPI, "Gerencia tráfego")
+    Rel(newSystemServiceAPI, newSystemSecurityServiceAPI, "Passa pelo gerenciamento de autenticação e autorização", "JWT, Bearer")
+    Rel(newSystemSecurityServiceAPI, newSystemDbWrite, "Altera dados", "CQRS")
+    Rel(newSystemSecurityServiceAPI, newSystemDbRead, "Lê dados", "CQRS")
+    Rel(newSystemServiceAPI, newSystemDbWrite, "Altera dados", "CQRS")
+    Rel(newSystemServiceAPI, newSystemDbRead, "Lê dados", "CQRS")
+    Rel(newSystemDbWrite, newSystemDbRead, "Sincroniza dados")
+}
+
+System_Ext(externalEmailSystem, "Sistema de email", "Sistema Sendgrid para serviços de email em escala.")
+System_Ext(hospitalERPExternalSystem, "Sistema de ERP ou API do hospital.", "Sistema de ERP ou API do hospital provedor de parte dos dados integrados na plataforma da empresa.")
+
+Rel(commonUser, newSystemWebAppMVC, "Utiliza")
+Rel(commonUser, newSystemSPA, "Utiliza")
+Rel(newSystemServiceAPI, hospitalERPExternalSystem, "Integra dados", "Ex: HL7 FHIR")
+Rel(newSystemServiceAPI, externalEmailSystem, "Solicita envio de email")
+Rel(externalEmailSystem, commonUser, "Envia email")
+@enduml

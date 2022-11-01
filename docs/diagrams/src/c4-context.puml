@@ -1,0 +1,15 @@
+@startuml C4_Model_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+left to right direction
+
+Person(commonUser, "Usuário do Sistema", "Profissional da área da Saúde com conta no sistema.")
+System(newSystem, "Sistema Novo da Empresa", "Qualquer sistema migrado do legado.")
+System_Ext(externalEmailSystem, "Sistema de email", "Sistema Sendgrid para serviços de email em escala.")
+System_Ext(hospitalERPExternalSystem, "Sistema de ERP ou API do hospital", "Sistema de ERP ou API do hospital provedor de parte dos dados integrados na plataforma da empresa.")
+
+Rel(commonUser, newSystem, "Utiliza")
+Rel(newSystem, hospitalERPExternalSystem, "Integra dados", "Ex: HL7 FHIR")
+Rel(newSystem, externalEmailSystem, "Solicita envio de email")
+Rel(externalEmailSystem, commonUser, "Envia email")
+@enduml
